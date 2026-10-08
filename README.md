@@ -1,6 +1,6 @@
 # Synthetic support-incident explorer
 
-This is an empty application starter with a deterministic fictional dataset. The application architecture, API, frontend structure, and implementation are deliberately open.
+A local, read-only explorer for 2,400 fictional support incidents, with a dependency-free Node HTTP backend and a responsive browser interface.
 
 The qualification environment uses Node.js 24. Run `npm run seed` from this directory to create `.runtime/incidents.json`. The generator requires no packages or network access. Every invocation produces the same bytes. See `data/FIELDS.md` for the record meanings.
 
@@ -35,3 +35,29 @@ The same dedicated tool prefix also provides this actual browser/HTTP prerequisi
 qualification-browser-smoke
 
 It starts and closes a tiny real loopback HTTP page and sandbox-enabled Chromium, records actual process identities/launch argv and closure under ignored `.runtime/`, and reports the receipt path. It verifies the installed browser environment; it never supplies the application's behavior, design, API or passing acceptance.
+
+## Run the explorer
+
+With Node 24, run `npm run seed` once, then `npm run start`.
+Open **http://127.0.0.1:3000**. The server binds only to IPv4 loopback.
+Stop it with Ctrl+C in its terminal. The application has no runtime dependencies.
+If port 3000 is occupied, stop the other local process before starting.
+
+Search is literal and case-insensitive across ID, title and description. Checked values
+within each category are combined with OR; categories, search and inclusive UTC dates
+are combined with AND. Opened date defaults to newest first, with 25 rows. Severity
+uses critical, high, medium, low; ties use ascending incident ID. Query and sort changes
+reset to page one. Counts and daily chart always describe all matches. Expand the chart
+for dated bars and readable counts. Details preserve the results when you return.
+
+Saved views are stored in this browser's localStorage for this origin. They remember
+search, filters, sorting and page size, and can be reopened or deleted. CSV exports every
+matching record in the selected order; tags are a JSON array inside a correctly quoted
+CSV field. Null resolved dates export as an empty field. Incident content is plain text.
+
+Run `npm test` for canonical-data preparation and discovered HTTP and sandboxed Chromium
+application tests. Then run `qualification-browser-smoke` for the independent installed
+browser prerequisite. Tests use ephemeral loopback ports, close their servers and browsers,
+and preserve the generated dataset bytes. Screenshots, downloads and browser receipts
+are written under ignored `.runtime/`. The real failure journey stops the HTTP server,
+checks preserved selections, restarts the same port and retries; responses are never mocked.
